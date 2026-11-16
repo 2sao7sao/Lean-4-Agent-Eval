@@ -1,0 +1,13 @@
+{
+  "kind": "synthetic_intake_replay",
+  "messages": [
+    "帮我分析销售数据，做一份五页中文PPT给经营负责人，说明变化贡献。",
+    "使用 input/sales.csv；基期2026-09，对比期2026-10。",
+    "输入是订单快照，按订单业务日期归月；按净销售额，仅paid订单；原始金额CNY分；退款扣回原订单月份。按region拆分；仅本地交付不外发。"
+  ],
+  "expected_states": [
+    "needs_clarification",
+    "needs_clarification",
+    "ready_for_review"
+  ]
+}

@@ -17,6 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 EXAMPLE = ROOT / 'examples/sales-to-ppt'
 sys.path.insert(0, str(ROOT / 'src'))
 from lean4_agent_eval.contracts import validate_contract
+from lean4_agent_eval.intake import compile_session, new_session, reply
 
 
 def require(condition, message):
@@ -94,6 +95,16 @@ def main():
         covered.update(case['requirement_ids'])
     require(requirements <= covered, 'Case plan misses a requirement')
     numeric = check_reference()
+    conversation = json.loads((EXAMPLE / 'intake-conversation.json').read_text())
+    session = new_session(conversation['messages'][0])
+    states = [compile_session(session)['state']]
+    for message in conversation['messages'][1:]:
+        session = reply(session, message)
+        states.append(compile_session(session)['state'])
+    require(states == conversation['expected_states'], 'M1 conversation state mismatch')
+    generated = compile_session(session)['contract']
+    require(not validate_contract(generated), 'Generated M1 contract is invalid')
+    require(generated['status'] == 'draft', 'M1 must not freeze execution')
 
     for document in [ROOT / 'README.md', *(ROOT / 'docs').glob('*.md'), *EXAMPLE.glob('*.md')]:
         for target in re.findall(r'\[[^\]]*\]\(([^)]+)\)', document.read_text()):
@@ -106,6 +117,7 @@ def main():
                       'scope': 'Static contracts, reference fixture, coverage-plan references and local document links only.',
                       'requirements': len(contract['requirements']), 'required_checks': sum(c['required'] for c in contract['checks']),
                       'planned_cases': len(plan['cases']), 'reference': numeric,
+                      'm1_conversation_states': states,
                       'agent_execution': 'NOT_PERFORMED', 'ppt_validation': 'NOT_IMPLEMENTED'}, ensure_ascii=False, indent=2))
 
 

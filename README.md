@@ -1,91 +1,143 @@
-# Lean 4 Agent Eval
+# Lean-4-Agent-Eval
 
-将用户的 Agent 需求转化为可执行评估合同，自动构建评估集与验收器，联合检查执行轨迹和最终产物，并通过形式化验证、实验统计与人工校准，为每个评估结论提供依据与适用边界。
+**从简单沟通到可检查的 Agent 评估合同，让验收标准、过程证据和最终交付对应起来。**
 
-面向编程、数据分析、PPT 与文案等办公 Agent。第一条业务链路是 **销售数据分析 → 分析结论 → 五页 PPT 交付**。
+<p align="center">
+  <a href="#quick-start">快速开始</a> ·
+  <a href="docs/intake.md">沟通与合同 API</a> ·
+  <a href="docs/architecture.md">系统架构</a> ·
+  <a href="#status-and-roadmap">实现状态</a>
+</p>
 
-## 产品工作流
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.11%2B-3776AB" alt="Python 3.11+" />
+  <img src="https://img.shields.io/badge/Stage-M1_local_prototype-8bd5ca" alt="M1 local prototype" />
+  <img src="https://img.shields.io/badge/Lean-verdict_model-b7bdf8" alt="Lean verdict model only" />
+</p>
 
-1. **拆解需求**：用少量沟通和正反例明确目标、输入、交付物、约束、风险及待澄清问题。
-2. **编译评估合同**：为每条要求建立验收条件、证据要求、检查器及需求来源；关键歧义阻止合同冻结。
-3. **构建评估集**：生成正常、边界、异常和对抗场景，为每例建立可信的参考结果或性质检查；开发集与保留验收集隔离。
-4. **执行并取证**：在受控环境运行被评估 Agent，独立采集工具事件、状态变化和实际产物。
-5. **分层验收**：分别检查过程约束、最终结果和开放式质量；缺证据时保留未知，评估器故障时保留错误。
-6. **迭代与回归**：依据失败案例提出改进，在固定合同和独立验收集上复测；修改标准必须形成新版本。
+## 为什么做这个项目
 
-```mermaid
-flowchart TD
-    A[需求沟通与正反例] --> B[评估合同]
-    B --> C[评估集与验收器构建]
-    C --> D[Agent 执行与证据采集]
-    D --> E[过程与端到端验收]
-    K[Lean 判定核心与可证明检查器] --> E
-    E --> F[结论、证据、反例与统计区间]
-    F --> G[候选改进与独立回归]
-    G --> D
-```
+Agent 完成了一次工具调用、写出了一份报告，并不直接说明用户的目标已经达成。可靠的评估需要先把需求变成明确标准，再收集独立证据，检查实际过程和交付物。
 
-## 当前状态
+Lean-4-Agent-Eval 围绕 **需求拆解 → 验收标准生成 → 评估集构建 → 执行取证 → 分层验证 → 回归迭代** 建设。
 
-当前版本是 **产品架构与合同骨架**。结构检查通过不代表 Agent 业务通过。
-
-| 能力 | 当前交付 |
+| 能力 | 当前可用范围 |
 |---|---|
-| 产品定位、模块边界、数据流、实施里程碑 | 已定义 |
-| 评估合同、检查回执的数据结构 | JSON Schema 与离线合同校验器 |
-| 销售分析到 PPT 样例 | 人工编写的需求、合同、合成 CSV、参考结果、场景与评分器反例计划 |
-| 类 Lean 判定核心 | 11 个 Lean 命名定理，覆盖非空必检集、失败优先、遗漏必检项阻止通过等性质 |
-| 自然语言需求拆解、合同自动生成 | 接口已定义，待实现与用户校准 |
-| 自动生成场景、真实 Agent 执行、证据采集 | 接口与要求已定义，待实现 |
-| PPT 解析与渲染验收、模型裁判 | 待实现；样例不包含伪造的 Agent 运行结果 |
-| 自动改进与保留集回归 | 实验策略已定义，待实现 |
+| 澄清需求 | 从简短中文沟通识别销售到 PPT 的关键字段；缺失、不确定、冲突或已识别的超范围要求先提问。 |
+| 生成验收标准 | 根据金额口径、月份、维度、语言、页数和权限，动态生成 6 条需求、8 个必检项及证据要求。 |
+| 审查与更正 | 保存多轮记录和字段来源；绑定合同审查哈希；需求更正使旧确认失效。 |
+| 检查合同 | 校验结构、引用、必检覆盖及确认一致性；未知不能算作通过。 |
+| 形式化判定模型 | Lean 证明非空必检聚合、失败优先、遗漏检查阻止通过等明确性质。 |
 
-## 第一版样例
+当前是 **本地领域规则原型**，无需模型 API。它支持明确列出的表达和字段，不具备任意自然语言理解能力；自动评估集、真实 Agent 执行、PPT 渲染验收和生产可靠性仍待实现或验证。Lean 证明范围限于判定模型。
 
-输入为一份合成销售明细。任务要求按明确口径比较 2026 年 9 月和 10 月净销售额，解释可由数据支持的变化贡献，并交付 `analysis.json` 与五页中文 `report.pptx`。
+<a id="quick-start"></a>
+## 快速开始
 
-评估检查统计口径与数值、分组加总、结论依据、PPT 内容与实际渲染、跨产物数字一致性，以及输入来源和操作权限。分组贡献不能直接解释为已经证实的业务因果关系。
+需要 Python 3.11+。演示使用合成沟通记录，在本地运行。
 
-从 [样例说明](examples/sales-to-ppt/README.md)、[需求](examples/sales-to-ppt/request.md)和[合同](examples/sales-to-ppt/contract.json)进入。
-
-## 本地检查
-
-Python 3.11+。以下命令校验仓库资产，不调用模型或外部业务系统，也不会生成 PPT。
-
-```sh
+```bash
+git clone https://github.com/2sao7sao/Lean-4-Agent-Eval.git
+cd Lean-4-Agent-Eval
 python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements-dev.txt
-.venv/bin/python scripts/check_project.py
-.venv/bin/python -m unittest discover -s tests -v
+.venv/bin/python scripts/intake.py demo
 ```
 
-形式模型检查要求 `lake` 已在 PATH，工具链固定于 [formal/lean-toolchain](formal/lean-toolchain)。
+预期输出包括：
 
-```sh
+```text
+needs_clarification → needs_clarification → ready_for_review → requirements_confirmed
+user_turns: 3
+requirements: 6
+acceptance_checks: 8
+contract_status: draft
+execution_ready: false
+```
+
+在 `.artifacts/m1-demo/` 查看 `contract.json`、`review.md`、`session.json` 和 `demo-report.json`。演示中的确认来自合成审查人，只验证沟通到合同的流程，不是实际用户批准或 Agent 性能分数。
+
+开始一次交互式沟通：
+
+```bash
+.venv/bin/python scripts/intake.py chat \
+  --request '帮我分析销售数据，做一份五页中文PPT给经营负责人，说明变化贡献。' \
+  --session .artifacts/my-intake/session.json \
+  --out .artifacts/my-intake/export
+```
+
+可以一次补充多个口径；修改已有口径时使用“更正：…”。标准齐全后显示审查稿，输入“确认”记录本次需求确认。支持保存后通过 `reply` 继续，详见 [沟通与合同 API](docs/intake.md)。
+
+## 如何工作
+
+```text
+用户需求 → 提取显式字段 → 缺失/冲突澄清 → 生成合同与验收标准
+                                     ↓
+                      审查来源与规则 → 哈希绑定的需求确认
+                                     ↓
+                 后续：评估集 → Agent 执行 → 证据 → 验收
+```
+
+关键口径未补齐时，`contract` 为 `null`；识别到冲突不会悄悄选择一方。每个字段保留来源轮次，编译器提议的通用规则与阈值单独展示，供用户审查。
+
+**需求已确认不等于执行已就绪。** 当前业务检查器仍标为 `planned`，生成合同保持 `draft`。合同确认也不构成邮件、上传或其他外发批准。
+
+## 复现销售分析到 PPT 的例子
+
+| 沟通输入 | 行为 |
+|---|---|
+| “分析销售数据，五页中文 PPT，给经营负责人，说明变化贡献” | 识别交付目标，追问数据范围、金额口径与权限。 |
+| “使用 input/sales.csv；基期2026-09，对比期2026-10” | 记录文件与月份来源，继续澄清统计定义。 |
+| “订单快照，按订单业务日期；净销售额，仅 paid；CNY 分；退款扣回原订单月；按 region；仅本地交付” | 自动生成金额、分组贡献、结论依据、文件、跨产物一致性及权限验收项。 |
+| 审查后确认；随后更正为“六页 PPT” | 先记录匹配哈希的确认；更正后重新生成标准并要求重新审查。 |
+
+[样例目录](examples/sales-to-ppt/README.md) 同时保留十行合成 CSV、独立可重算的参考数值和十二个后续场景/反例计划。参考答案只属于评估器，不进入被测 Agent 上下文。
+
+```bash
+.venv/bin/python -m unittest discover -s tests -v
+.venv/bin/python scripts/check_project.py
+```
+
+这些检查覆盖沟通状态、动态标准、冲突、否定、不确定表达、来源、确认失效、合同边界及参考夹具；不是对通用语言理解或办公 Agent 的性能评价。
+
+2026-11-16 本地验收通过 43 项测试、三条消息的合成重放和仓库资产检查。形式模型另通过 11 个命名定理检查及 4 个负向控制。范围与复现方式见 [M1 验收记录](docs/m1-validation.md)。
+
+<a id="status-and-roadmap"></a>
+## 实现状态与路线
+
+| 阶段 | 状态 | 下一项验收证据 |
+|---|---|---|
+| M0 产品架构与合同骨架 | 已建立 | 持续保持引用、数值和判定模型检查有效。 |
+| M1 需求沟通到合同 | 销售到 PPT 的规则流程已实现 | 增加真实需求表达与用户审查样本；扩展解析覆盖，保持不确定口径不被猜测。 |
+| M2 自动构建评估集 | 待实现 | 场景自动物化、独立参考计算、评分器反例有效及保留集隔离。 |
+| M3 真实业务闭环 | 待实现 | Agent、工具边界、实际 analysis.json / PPTX 和全页渲染证据。 |
+| M4 可信迭代 | 待实现 | 裁判校准、预算化实验、固定合同回归，禁止放宽标准换取高分。 |
+
+执行冻结还需检查器实现、校准与注册表、确认身份和运行适配器；不因 M1 会话完成而跳过。[详细路线](docs/roadmap.md)
+
+## 类 Lean 验证的边界
+
+精确标准、证据与独立检查共同构成验收依据。`formal/` 中有 11 个命名定理，覆盖必检判定聚合；不证明需求理解、Python、数据真实性、trace 完整性或 PPT 质量。
+
+已安装 `lake` 并配置 [固定工具链](formal/lean-toolchain) 后：
+
+```bash
 python3 scripts/check_formal.py
 ```
 
-该脚本构建形式模型、审计命名定理的公理依赖，并运行四个负向控制。检查回执写入忽略提交的 `.artifacts/formal-verification.json`。这些检查不证明 Python 校验器、数据真实性、trace 完整性或 PPT 质量。
+脚本构建模型、审计公理依赖并运行四个负向控制。形式证明、确定性检查、经验评分和统计区间分别报告；详见 [验证范围与信任边界](docs/verification-boundary.md)。
 
-## 项目布局
+## 文档与代码
 
-```text
-docs/                         产品架构、合同语义、验证边界、实施路线
-schemas/                      评估合同和检查回执 JSON Schema
-src/lean4_agent_eval/          合同校验器及未来模块接口
-formal/                       Lean 判定核心与公理审计
-examples/sales-to-ppt/         首条业务链路的产品验收样例
-scripts/                      仓库资产与形式模型检查
-tests/                        合同校验器的失效边界回归
-```
+| 资源 | 用途 |
+|---|---|
+| [沟通与合同 API](docs/intake.md) | 支持口径、CLI、Python API、会话状态和错误处理。 |
+| [系统架构](docs/architecture.md) | 需求、场景、执行、证据、检查器与迭代边界。 |
+| [合同语义](docs/evaluation-contract.md) · [Schema](schemas/contract.schema.json) | 字段、来源、确认、四种判定与冻结条件。 |
+| [样例](examples/sales-to-ppt/README.md) | 沟通重放、数据口径、参考值和验收计划。 |
+| [M1 验收记录](docs/m1-validation.md) | 本次检查结果、复现命令与尚未验证的范围。 |
+| [实现](src/lean4_agent_eval) · [测试](tests) · [Lean 核心](formal) | 当前可运行代码与性质检查。 |
 
-详细设计：[系统架构](docs/architecture.md) · [合同与结论语义](docs/evaluation-contract.md) · [验证边界](docs/verification-boundary.md) · [实施路线](docs/roadmap.md)。
+项目只维护产品设计、实现与验收资产。真实沟通记录、数据、输出、凭据和本地检查回执应留在忽略提交的目录中。
 
-## 结论应当如何解释
-
-- **形式证明**说明某条精确定义的性质，在声明的模型与前提下成立。
-- **确定性检查**说明指定输入与产物通过了指定检查器。
-- **实验统计**说明固定版本在被抽样的任务和运行条件下表现如何。
-- **质量评分**需要说明量表、校准数据和人工复核范围。
-
-每次验收保留 `PASS / FAIL / UNKNOWN / ERROR` 及逐项证据。硬性违规不能被平均分抵消，未知与故障不能算作通过。项目只维护产品设计、实现和验收资产。
+相关项目：[Agent Peak Bench](https://github.com/2sao7sao/agent-peak-bench) 提供评估运行与实验组织参考；[EvolveMemory](https://github.com/2sao7sao/EvolveMemory) 提供可审查运行时与项目文档组织参考。它们是独立项目，当前没有运行时集成。

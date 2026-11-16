@@ -1,4 +1,4 @@
-"""Planned integration interfaces. No agent, judge or generator is implemented here.
+"""Integration interfaces. The sales SpecCompiler has an M1 implementation.
 
 Documents must be validated at each boundary. Protocol conformance alone does
 not validate semantics, evidence integrity, permissions or proof claims.
@@ -24,7 +24,11 @@ class RunContext:
 
 class SpecCompiler(Protocol):
     def compile(self, request: str, answers: Mapping[str, str]) -> Document:
-        """Return a draft contract with unresolved questions, never self-approve it."""
+        """Return a clarification/review envelope; contract is null while unresolved.
+
+        SalesSpecCompiler is the current domain implementation. No execution or
+        approval is implied by a ready-for-review response.
+        """
         ...
 
 

@@ -1,12 +1,13 @@
 # 销售数据分析到 PPT 交付
 
-这是第一版产品验收样例。数据完全合成，合同和覆盖计划人工编写，用来定义未来自动生成器的输出目标。没有接入真实 Agent，也没有提交实际 PPT 或业务通过回执。
+这是销售分析到 PPT 的产品样例。数据完全合成；原有 contract.json 和覆盖计划保留为人工基准，M1 新增可重放的沟通记录，通过实际编译器自动生成另一份合同与标准。没有接入真实 Agent，也没有实际 PPT 或业务通过回执。
 
 ## 文件与角色
 
 | 文件 | 角色 |
 |---|---|
 | [request.md](request.md) | 示例用户需求与明确口径 |
+| [intake-conversation.json](intake-conversation.json) | M1 三条合成用户消息，实际进入澄清与编译流程 |
 | [input/sales.csv](input/sales.csv) | 十行合成订单快照 |
 | [contract.json](contract.json) | 六条需求、八个必检项、五类证据；状态为草案 |
 | [reference.json](reference.json) | 评估器私有参考；不得提供给被测 Agent |
@@ -37,7 +38,10 @@ Agent 应在隔离运行的输出目录提交 `analysis.json` 和 `report.pptx`�
 在仓库根目录按 README 安装依赖后：
 
 ```sh
+.venv/bin/python scripts/intake.py demo
 .venv/bin/python scripts/check_project.py
 ```
 
-检查覆盖合同结构、引用、场景计划引用、输入哈希、手工参考值的独立重算和文档链接。输出明确标为仓库资产检查，不是 Agent 评估。真实业务口径、生成器、Agent 适配器和全部八个验收器尚待实现/校准。
+第一条命令将模糊需求经过两次补充，自动生成 6 条需求、8 个验收项，再记录合成审查确认。产物在 `.artifacts/m1-demo/`，确认不意味着执行就绪。生成标准可以随月份、净/毛额、单位、维度、页数、语言和权限变化，不读取 reference.json 作为答案。
+
+第二条命令检查合同结构、引用、场景计划、输入哈希、手工参考值独立重算和文档链接。两者都不是 Agent 性能评估。真实业务需求审查、评估集自动生成、Agent 适配器和八个业务验收器仍需后续工作。CLI 与支持的表达见 [沟通说明](../../docs/intake.md)。

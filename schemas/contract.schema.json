@@ -332,6 +332,81 @@
         "promotion_policy"
       ],
       "additionalProperties": false
+    },
+    "intake": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "compiler",
+        "session_id",
+        "facts",
+        "provenance",
+        "requirements_confirmation"
+      ],
+      "properties": {
+        "compiler": {
+          "const": "sales-to-ppt.rules.v1"
+        },
+        "session_id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "facts": {
+          "type": "object",
+          "minProperties": 1
+        },
+        "provenance": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "turn_id",
+              "excerpt"
+            ],
+            "properties": {
+              "turn_id": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "excerpt": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              }
+            }
+          }
+        },
+        "requirements_confirmation": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "review_sha256",
+                "confirmed_by"
+              ],
+              "properties": {
+                "review_sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "confirmed_by": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                }
+              }
+            }
+          ]
+        }
+      }
     }
   },
   "required": [
