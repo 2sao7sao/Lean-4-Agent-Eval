@@ -1,0 +1,6 @@
+name = "lean4-agent-eval-formal"
+version = "0.1.0"
+defaultTargets = ["Lean4AgentEval"]
+
+[[lean_lib]]
+name = "Lean4AgentEval"

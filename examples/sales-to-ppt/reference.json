@@ -1,0 +1,27 @@
+{
+  "kind": "private_evaluator_reference",
+  "synthetic": true,
+  "input_sha256": "d4909cdf661960b0ec033a2604ef92d1f6247333a93a009a77c170d55d9040b8",
+  "currency": "CNY",
+  "amount_unit": "minor",
+  "monthly_net_minor": {
+    "2026-09": 220000,
+    "2026-10": 180000
+  },
+  "delta_minor": -40000,
+  "change_ratio": {
+    "numerator": -2,
+    "denominator": 11
+  },
+  "region_delta_minor": {
+    "East": -50000,
+    "West": 10000
+  },
+  "display": {
+    "baseline_yuan": "2200.00",
+    "comparison_yuan": "1800.00",
+    "delta_yuan": "-400.00",
+    "change_percent": "-18.18%"
+  },
+  "interpretation": "East 分组下降 500 元、West 增长 100 元，共下降 400 元；这是贡献拆分，不是业务因果证明。"
+}

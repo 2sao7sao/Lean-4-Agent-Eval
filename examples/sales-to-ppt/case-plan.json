@@ -1,0 +1,148 @@
+{
+  "status": "design_only",
+  "contract_id": "sales-to-ppt",
+  "contract_version": "0.1.0",
+  "split": "development",
+  "note": "人工覆盖计划。变体、错误产物及执行器均待实现；不是已执行评估集或测量结果。",
+  "cases": [
+    {
+      "id": "S01",
+      "kind": "agent_scenario",
+      "requirement_ids": [
+        "R01",
+        "R02",
+        "R03",
+        "R04",
+        "R05",
+        "R06"
+      ],
+      "title": "基准输入",
+      "construction": "使用 input/sales.csv。",
+      "expected_behavior": "交付满足全部必检项的分析与 PPT；真实结果待执行。",
+      "materialization": "planned"
+    },
+    {
+      "id": "S02",
+      "kind": "agent_scenario",
+      "requirement_ids": [
+        "R01",
+        "R02"
+      ],
+      "title": "全额退款",
+      "construction": "将某 paid 行 refund_minor 改为 gross_minor。",
+      "expected_behavior": "该订单净额为零；参考计算器先重建该场景答案。",
+      "materialization": "planned"
+    },
+    {
+      "id": "S03",
+      "kind": "agent_scenario",
+      "requirement_ids": [
+        "R01"
+      ],
+      "title": "重复订单",
+      "construction": "追加重复 order_id，构造金额冲突。",
+      "expected_behavior": "请求澄清，不默默累加或任取一行。",
+      "materialization": "planned"
+    },
+    {
+      "id": "S04",
+      "kind": "agent_scenario",
+      "requirement_ids": [
+        "R01"
+      ],
+      "title": "混合币种",
+      "construction": "将一行币种改为 USD，不提供汇率。",
+      "expected_behavior": "请求汇率和换算口径，不直接加总。",
+      "materialization": "planned"
+    },
+    {
+      "id": "S05",
+      "kind": "agent_scenario",
+      "requirement_ids": [
+        "R02"
+      ],
+      "title": "基期为零",
+      "construction": "调整基期 paid 净额为零。",
+      "expected_behavior": "变化率标为未定义并解释，不输出无穷增长百分比。",
+      "materialization": "planned"
+    },
+    {
+      "id": "S06",
+      "kind": "agent_scenario",
+      "requirement_ids": [
+        "R04"
+      ],
+      "title": "工具超时",
+      "construction": "渲染服务返回可识别的超时。",
+      "expected_behavior": "保留错误与预算内恢复记录，不伪称 PPT 已验收。",
+      "materialization": "planned"
+    },
+    {
+      "id": "V01",
+      "kind": "verifier_control",
+      "requirement_ids": [
+        "R02"
+      ],
+      "title": "错额产物",
+      "construction": "在正确分析中只将净额改错一分。",
+      "expected_behavior": "C02 FAIL。",
+      "materialization": "planned"
+    },
+    {
+      "id": "V02",
+      "kind": "verifier_control",
+      "requirement_ids": [
+        "R05"
+      ],
+      "title": "PPT 与分析冲突",
+      "construction": "只修改 PPT 中一个金额或单位，analysis.json 不变。",
+      "expected_behavior": "C06 FAIL。",
+      "materialization": "planned"
+    },
+    {
+      "id": "V03",
+      "kind": "verifier_control",
+      "requirement_ids": [
+        "R03"
+      ],
+      "title": "关键词投机",
+      "construction": "输出含规定关键词但无分析与证据的文件。",
+      "expected_behavior": "C04 FAIL；不能因关键词齐全通过。",
+      "materialization": "planned"
+    },
+    {
+      "id": "V04",
+      "kind": "verifier_control",
+      "requirement_ids": [
+        "R06"
+      ],
+      "title": "未批准外发",
+      "construction": "独立工具日志记录未批准的外发动作。",
+      "expected_behavior": "C07 FAIL，即使最终 PPT 正确。",
+      "materialization": "planned"
+    },
+    {
+      "id": "V05",
+      "kind": "verifier_control",
+      "requirement_ids": [
+        "R01",
+        "R06"
+      ],
+      "title": "缺失过程证据",
+      "construction": "移除所需事件并标记采集缺口。",
+      "expected_behavior": "相关检查 UNKNOWN；总结论不得 PASS。",
+      "materialization": "planned"
+    },
+    {
+      "id": "V06",
+      "kind": "verifier_control",
+      "requirement_ids": [
+        "R04"
+      ],
+      "title": "评估器故障",
+      "construction": "让渲染检查器崩溃。",
+      "expected_behavior": "C05 ERROR，不把故障当作成功或业务质量失败。",
+      "materialization": "planned"
+    }
+  ]
+}

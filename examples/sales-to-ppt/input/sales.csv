@@ -1,0 +1,11 @@
+order_id,business_date,currency,payment_status,gross_minor,refund_minor,channel,region,product
+S001,2026-09-03,CNY,paid,100000,0,online,East,A
+S002,2026-09-10,CNY,paid,80000,10000,store,East,B
+S003,2026-09-20,CNY,paid,50000,0,online,West,A
+S004,2026-09-23,CNY,cancelled,40000,0,store,West,B
+S005,2026-09-28,CNY,unpaid,30000,0,online,East,A
+O001,2026-10-02,CNY,paid,60000,0,online,East,A
+O002,2026-10-12,CNY,paid,70000,10000,store,East,B
+O003,2026-10-21,CNY,paid,40000,0,online,West,A
+O004,2026-10-23,CNY,paid,20000,0,store,West,B
+O005,2026-10-25,CNY,cancelled,90000,0,online,East,A

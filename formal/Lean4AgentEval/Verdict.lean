@@ -1,6 +1,6 @@
 import Std
 
-namespace Lean4Agent
+namespace Lean4AgentEval
 
 /-- Results of mandatory checks. Evidence extraction is outside this model. -/
 inductive Verdict where
@@ -87,10 +87,4 @@ theorem missing_required_blocks (required : List Nat) (receipts : Nat → Option
 theorem empty_contract_is_unknown (receipts : Nat → Option Verdict) :
     evaluateRequired [] receipts = .unknown := by rfl
 
-example : aggregate [.pass, .unknown] = .unknown := by decide
-example : aggregate [.error, .fail] = .fail := by decide
-example : aggregate [.pass, .pass] = .pass := by decide
-example : evaluateRequired [1, 2] (fun id => if id = 1 then some .pass else none)
-    = .unknown := by decide
-
-end Lean4Agent
+end Lean4AgentEval

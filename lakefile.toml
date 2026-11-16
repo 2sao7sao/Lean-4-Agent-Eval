@@ -1,6 +1,0 @@
-name = "lean4agent"
-version = "0.1.0"
-defaultTargets = ["Lean4Agent"]
-
-[[lean_lib]]
-name = "Lean4Agent"
