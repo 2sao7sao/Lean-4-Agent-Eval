@@ -33,8 +33,12 @@ class SpecCompiler(Protocol):
 
 
 class CaseBuilder(Protocol):
-    def build(self, frozen_contract: Document, coverage_plan: Document) -> Sequence[Document]:
-        """Return validated cases; keep private oracles separate from agent inputs."""
+    def build(self, confirmed_contract: Document, coverage_plan: Document) -> Sequence[Document]:
+        """Build from M1 requirement confirmation; runtime freezing is a later gate.
+
+        SalesCaseBuilder materializes local sales fixtures. Packaging keeps private
+        oracles separate from agent inputs. This does not authorize agent execution.
+        """
         ...
 
 
