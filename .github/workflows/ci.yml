@@ -22,7 +22,8 @@ jobs:
           cache-dependency-path: requirements-dev.txt
       - run: python -m pip install --upgrade pip
       - run: python -m pip install -r requirements-dev.txt
-      - run: python -m pytest -q --tb=short
+      - name: Run the test suite
+        run: python -m unittest discover -s tests -p 'test_*.py' -v
 
   formal:
     name: Lean verdict model
