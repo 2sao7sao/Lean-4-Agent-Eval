@@ -15,6 +15,7 @@
   <img src="https://img.shields.io/badge/Stage-M2_offline_evalset-8bd5ca" alt="M2 offline evaluation dataset" />
   <img src="https://img.shields.io/badge/Lean-verdict_model-b7bdf8" alt="Lean verdict model only" />
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-8bd5ca" alt="Apache-2.0 license" /></a>
+  <a href="https://github.com/2sao7sao/Lean-4-Agent-Eval/actions/workflows/ci.yml"><img src="https://github.com/2sao7sao/Lean-4-Agent-Eval/actions/workflows/ci.yml/badge.svg" alt="CI workflow status" /></a>
 </p>
 
 ## 为什么做这个项目
@@ -141,6 +142,8 @@ M2 预期输出 `PASS_FOR_M2_DATASET_AND_CONTROLS`：55 份参考结果通过独
 | M4 可信迭代 | 待实现 | 裁判校准、预算化实验、固定合同回归，禁止放宽标准换取高分。 |
 
 执行冻结还需检查器实现、校准与注册表、确认身份和运行适配器；不因 M1 会话完成而跳过。[详细路线](docs/roadmap.md)
+
+CI 每次 push / PR 都会跑两件事：全量 unittest 测试，以及 scripts/check_formal.py（用固定工具链重建判定模型、逐个审计定理的公理依赖、跑四个负向控制），后者产出的报告作为构建产物上传。它验证的是判定模型，不是 Agent 性能。
 
 ## 类 Lean 验证的边界
 
