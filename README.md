@@ -14,6 +14,7 @@
   <img src="https://img.shields.io/badge/Python-3.11%2B-3776AB" alt="Python 3.11+" />
   <img src="https://img.shields.io/badge/Stage-M2_offline_evalset-8bd5ca" alt="M2 offline evaluation dataset" />
   <img src="https://img.shields.io/badge/Lean-verdict_model-b7bdf8" alt="Lean verdict model only" />
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-8bd5ca" alt="Apache-2.0 license" /></a>
 </p>
 
 ## 为什么做这个项目
